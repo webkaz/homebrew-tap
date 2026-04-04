@@ -1,23 +1,27 @@
 # Homebrew Tap
 
-[cmux](https://github.com/manaflow-ai/cmux) Intel Mac ビルドの Homebrew Tap。
+> [日本語版はこちら / Japanese](README.ja.md)
 
-## インストール
+Homebrew Tap for [cmux](https://github.com/manaflow-ai/cmux) Intel Mac builds.
+
+## Install
 
 ```sh
 brew install webkaz/tap/cmux-intel
 ```
 
-## 更新
+## Update
 
 ```sh
 brew upgrade --cask cmux-intel
 ```
 
-## Cask 一覧
+## Available Casks
 
-| Cask | 説明 |
-|------|------|
-| `cmux-intel` | cmux Intel Mac (x86_64) 署名なしビルド |
+| Cask | Description |
+|------|-------------|
+| `cmux-intel` | cmux Intel Mac (x86_64) unsigned build |
 
-Cask 定義は本リポジトリの CI が [cmux-intel-builds](https://github.com/webkaz/cmux-intel-builds) の最新リリースを6時間ごとにチェックし自動更新する。
+## Auto Update
+
+This repo's CI checks [cmux-intel-builds](https://github.com/webkaz/cmux-intel-builds) for new releases every 6 hours (1 hour after the build CI) and auto-updates the Cask definition.
