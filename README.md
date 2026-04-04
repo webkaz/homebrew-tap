@@ -20,4 +20,4 @@ brew upgrade --cask cmux-intel
 |------|------|
 | `cmux-intel` | cmux Intel Mac (x86_64) 署名なしビルド |
 
-Cask 定義は [cmux-intel-builds](https://github.com/webkaz/cmux-intel-builds) の CI により自動更新される。
+Cask 定義は本リポジトリの CI が [cmux-intel-builds](https://github.com/webkaz/cmux-intel-builds) の最新リリースを6時間ごとにチェックし自動更新する。
