@@ -1,0 +1,58 @@
+name: Update codexmonitor-intel cask
+
+on:
+  schedule:
+    # ビルド CI (0 */6 * * *) の2時間後にチェック
+    - cron: "0 2,8,14,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for new release and update cask
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # codexmonitor-intel-builds の最新リリースタグを取得
+          LATEST_TAG=$(gh api repos/webkaz/codexmonitor-intel-builds/releases/latest --jq '.tag_name')
+          echo "Latest release: $LATEST_TAG"
+
+          # タグからバージョンを抽出（v0.7.67-intel → 0.7.67）
+          VERSION=$(echo "$LATEST_TAG" | sed 's/^v//; s/-intel$//')
+          echo "Version: $VERSION"
+
+          # 現在の Cask バージョンを取得
+          CURRENT=$(grep 'version "' Casks/codexmonitor-intel.rb | head -1 | sed 's/.*version "//; s/"//')
+          echo "Current cask version: $CURRENT"
+
+          if [ "$VERSION" = "$CURRENT" ]; then
+            echo "Already up to date"
+            exit 0
+          fi
+
+          echo "Updating $CURRENT → $VERSION"
+
+          # DMG をダウンロードして SHA256 を計算
+          DMG_URL="https://github.com/webkaz/codexmonitor-intel-builds/releases/download/${LATEST_TAG}/CodexMonitor-macos-intel.dmg"
+          curl -fSL -o /tmp/codexmonitor.dmg "$DMG_URL"
+          SHA256=$(sha256sum /tmp/codexmonitor.dmg | awk '{print $1}')
+          rm /tmp/codexmonitor.dmg
+          echo "SHA256: $SHA256"
+
+          # Cask 定義を更新
+          sed -i "s/version \"${CURRENT}\"/version \"${VERSION}\"/" Casks/codexmonitor-intel.rb
+          sed -i "s/sha256 \"[a-f0-9]*\"/sha256 \"${SHA256}\"/" Casks/codexmonitor-intel.rb
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/codexmonitor-intel.rb
+          git commit -m "chore: update codexmonitor-intel to ${VERSION}"
+          git push

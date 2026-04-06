@@ -2,26 +2,27 @@
 
 > [日本語版はこちら / Japanese](README.ja.md)
 
-Homebrew Tap for [cmux](https://github.com/manaflow-ai/cmux) Intel Mac builds.
+Homebrew Tap for Intel Mac (x86_64) unsigned builds of macOS apps.
 
 ## Install
 
 ```sh
-brew install webkaz/tap/cmux-intel
+brew install webkaz/tap/<cask-name>
 ```
 
 ## Update
 
 ```sh
-brew upgrade --cask cmux-intel
+brew upgrade --cask <cask-name>
 ```
 
 ## Available Casks
 
-| Cask | Description |
-|------|-------------|
-| `cmux-intel` | cmux Intel Mac (x86_64) unsigned build |
+| Cask | Description | Upstream |
+|------|-------------|----------|
+| `cmux-intel` | cmux Intel Mac (x86_64) unsigned build | [manaflow-ai/cmux](https://github.com/manaflow-ai/cmux) |
+| `codexmonitor-intel` | Codex Monitor Intel Mac (x86_64) unsigned build | [Dimillian/CodexMonitor](https://github.com/Dimillian/CodexMonitor) |
 
 ## Auto Update
 
-This repo's CI checks [cmux-intel-builds](https://github.com/webkaz/cmux-intel-builds) for new releases every 6 hours (1 hour after the build CI) and auto-updates the Cask definition.
+Separate CI workflows check each Intel build repo for new releases every 6 hours (offset from the build CI) and auto-update the corresponding Cask definition.
