@@ -1,0 +1,65 @@
+name: Update superset-intel cask
+
+on:
+  schedule:
+    # 1日2回チェック（上流リリースは頻繁ではない）
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for new release and update cask
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # superset-sh/superset の最新リリースタグを取得
+          LATEST_TAG=$(gh api repos/superset-sh/superset/releases/latest --jq '.tag_name')
+          echo "Latest release: $LATEST_TAG"
+
+          # タグからバージョンを抽出（desktop-v1.4.7 → 1.4.7）
+          VERSION=$(echo "$LATEST_TAG" | sed 's/^desktop-v//')
+          echo "Version: $VERSION"
+
+          # 現在の Cask バージョンを取得
+          CURRENT=$(grep 'version "' Casks/superset-intel.rb | head -1 | sed 's/.*version "//; s/"//')
+          echo "Current cask version: $CURRENT"
+
+          if [ "$VERSION" = "$CURRENT" ]; then
+            echo "Already up to date"
+            exit 0
+          fi
+
+          # x64 DMG の存在確認
+          DMG_URL="https://github.com/superset-sh/superset/releases/download/${LATEST_TAG}/Superset-x64.dmg"
+          HTTP_CODE=$(curl -sI -o /dev/null -w '%{http_code}' -L "$DMG_URL")
+          if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "302" ]; then
+            echo "x64 DMG not found for $LATEST_TAG (HTTP $HTTP_CODE), skipping"
+            exit 0
+          fi
+
+          echo "Updating $CURRENT → $VERSION"
+
+          # DMG をダウンロードして SHA256 を計算
+          curl -fSL -o /tmp/superset-x64.dmg "$DMG_URL"
+          SHA256=$(sha256sum /tmp/superset-x64.dmg | awk '{print $1}')
+          rm /tmp/superset-x64.dmg
+          echo "SHA256: $SHA256"
+
+          # Cask 定義を更新
+          sed -i "s/version \"${CURRENT}\"/version \"${VERSION}\"/" Casks/superset-intel.rb
+          sed -i "s/sha256 \"[a-f0-9]*\"/sha256 \"${SHA256}\"/" Casks/superset-intel.rb
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/superset-intel.rb
+          git commit -m "chore: update superset-intel to ${VERSION}"
+          git push
