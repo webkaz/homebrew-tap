@@ -1,6 +1,6 @@
 cask "superset-intel" do
-  version "1.9.5"
-  sha256 "a36f8f6e7e51201cdf608da365fbab9a7327bd9d65e67153af3508d98b9f58de"
+  version "1.9.6"
+  sha256 "d216af8d6ad7f2cc72ce95f724ea61a3ad66085d910813cc4205bb5d8d9b416f"
 
   url "https://github.com/superset-sh/superset/releases/download/desktop-v#{version}/Superset-x64.dmg"
   name "Superset (Intel)"
