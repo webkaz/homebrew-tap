@@ -1,6 +1,6 @@
 cask "cmux-intel" do
-  version "0.64.19"
-  sha256 "2fda89e3692220fa47d03104f90462f3aa9b92be1f061c307082e6b0725f51ec"
+  version "0.64.20"
+  sha256 "bc6382ca97d36b9619a243b6f0cecffe8516a32b98a10c8e827ca673823f685e"
 
   url "https://github.com/webkaz/cmux-intel-builds/releases/download/v#{version}-intel/cmux-macos-intel.dmg"
   name "cmux (Intel)"
