@@ -20,7 +20,7 @@ brew upgrade --cask <cask-name>
 
 | Cask | Description | Upstream |
 |------|-------------|----------|
-| `cmux-intel` | cmux Intel Mac (x86_64) unsigned build | [manaflow-ai/cmux](https://github.com/manaflow-ai/cmux) |
+| `cmux-intel` | **Discontinued.** Migrate to the official universal build | [manaflow-ai/cmux](https://github.com/manaflow-ai/cmux) |
 | `codexmonitor-intel` | Codex Monitor Intel Mac (x86_64) unsigned build | [Dimillian/CodexMonitor](https://github.com/Dimillian/CodexMonitor) |
 | `superset-intel` | Superset Intel Mac (x86_64) — official x64 DMG repackaged as Cask | [superset-sh/superset](https://github.com/superset-sh/superset) |
 
@@ -29,3 +29,18 @@ brew upgrade --cask <cask-name>
 Separate CI workflows check each Intel build repo for new releases every 6 hours (offset from the build CI) and auto-update the corresponding Cask definition.
 
 > **Note:** `superset-intel` is updated manually, as it repackages the official x64 DMG directly.
+
+## Migrating from cmux-intel
+
+The official cmux release now supports both Intel and Apple Silicon Macs. Quit
+cmux, then migrate to the signed and notarized official Homebrew cask:
+
+```sh
+brew uninstall --cask cmux-intel
+brew tap manaflow-ai/cmux
+brew install --cask cmux
+```
+
+Do not add `--zap` when uninstalling if you want to preserve your existing
+settings and application data. The `cmux-intel` updater workflow is retained
+for history but disabled.
